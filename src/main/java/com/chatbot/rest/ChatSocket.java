@@ -46,7 +46,8 @@ public class ChatSocket {
     @OnMessage
     public void onMessage(Session session, ChatRequest chatRequest, @PathParam("openId") String openId) {
         if (chatRequest.getIsChat()) {
-            chatService.chat(chatRequest.getOpenId(), chatRequest.getPrompt(), new WebSocketEventSourceListener(session, chatRequest));
+            chatService.chat(chatRequest.getOpenId(), chatRequest.getPrompt(), new WebSocketEventSourceListener(session, chatRequest))
+                    .subscribe().asCompletionStage();
         } else {
             chatService.completions(chatRequest.getPrompt(), new WebSocketEventSourceListener(session, chatRequest));
         }

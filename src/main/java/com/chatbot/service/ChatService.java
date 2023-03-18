@@ -2,6 +2,7 @@ package com.chatbot.service;
 
 import com.chatbot.domain.ApiKey;
 import com.chatbot.domain.ChatBot;
+import io.smallrye.mutiny.Uni;
 import okhttp3.sse.EventSourceListener;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -18,8 +19,8 @@ public class ChatService {
         chatBot.completions(apiKey.getRandomValidKey().getKey(), prompt, eventSourceListener);
     }
 
-    public void chat(String openId, String prompt, EventSourceListener eventSourceListener) {
-        chatBot.chat(apiKey.getRandomValidKey().getKey(), openId, prompt, eventSourceListener);
+    public Uni<String> chat(String openId, String prompt, EventSourceListener eventSourceListener) {
+        return chatBot.chat(apiKey.getRandomValidKey().getKey(), openId, prompt, eventSourceListener);
     }
 
 }

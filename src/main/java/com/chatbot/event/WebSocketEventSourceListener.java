@@ -1,6 +1,7 @@
 package com.chatbot.event;
 
 import cn.hutool.core.util.EscapeUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.chatbot.rest.request.ChatRequest;
@@ -26,7 +27,7 @@ public class WebSocketEventSourceListener extends EventSourceListener {
 
     Session session;
     ChatRequest chatRequest;
-    StringBuilder response;
+    StringBuilder response = new StringBuilder();
     Consumer<String> saveResponse;
 
     public WebSocketEventSourceListener(Session session, ChatRequest chatRequest) {
@@ -47,16 +48,26 @@ public class WebSocketEventSourceListener extends EventSourceListener {
     @Override
     public void onEvent(EventSource eventSource, String id, String type, String data) {
         try {
-            if (data.equals("[DONE]") && chatRequest.getIsChat()) {
+            if (data.equals("[DONE]")) {
                 log.info("OpenAI response has finished");
-                saveResponse.accept(response.toString());
-                log.info("save his success");
+                session.getAsyncRemote().sendObject(data);
+                if (chatRequest.getIsChat()) {
+                    saveResponse.accept(response.toString());
+                    log.info("save history success");
+                }
             } else {
                 String jsonStr = EscapeUtil.unescape(data);
                 JSONObject json = JSONUtil.parseObj(jsonStr);
-                String word = JSONUtil.getByPath(json, "choices[0].text").toString();
-                response.append(word);
-                session.getAsyncRemote().sendObject(word);
+                String word;
+                if (chatRequest.getIsChat()) {
+                    word = JSONUtil.getByPath(json, "choices[0].delta.content", "");
+                } else {
+                    word = JSONUtil.getByPath(json, "choices[0].text", "");
+                }
+                if (StrUtil.isNotBlank(word)) {
+                    response.append(word);
+                    session.getAsyncRemote().sendObject(word);
+                }
             }
         } catch (Exception e) {
             log.error("parse error:{}", data);
