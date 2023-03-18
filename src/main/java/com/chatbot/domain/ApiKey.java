@@ -6,7 +6,6 @@ import com.chatbot.domain.enums.KeyStatus;
 import com.chatbot.domain.repository.ApiKeyRepository;
 import com.chatbot.exceptions.BizException;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.List;
@@ -18,9 +17,12 @@ public class ApiKey {
     ApiKeyRepository apiKeyRepository;
     private List<ApiKeyEntity> keys;
 
-    @PostConstruct
     public void init() {
-        keys = apiKeyRepository.findAllApiKey();
+        try {
+            keys = apiKeyRepository.findAllApiKey();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public ApiKeyEntity getRandomValidKey() {

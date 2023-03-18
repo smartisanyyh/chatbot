@@ -1,14 +1,26 @@
 package com.chatbot.domain;
 
-import javax.annotation.PostConstruct;
+import com.unfbx.chatgpt.OpenAiStreamClient;
+import com.unfbx.chatgpt.entity.completions.Completion;
+import okhttp3.sse.EventSourceListener;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import javax.enterprise.context.ApplicationScoped;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 
 @ApplicationScoped
 public class ChatBot {
-    @PostConstruct
-    void init() {
-        System.out.println(111);
-    }
+
+    public static final String HTTPS_API_OPENAI_COM = "https://api.openai.com/";
+
+    @ConfigProperty(name = "proxy.enable", defaultValue = "false")
+    Boolean enableProxy;
+
+    @ConfigProperty(name = "proxy.host", defaultValue = "localhost")
+    String proxyHost;
+    @ConfigProperty(name = "proxy.port", defaultValue = "7654")
+    Integer proxyPort;
 
     /**
      * 单次问答
@@ -57,18 +69,26 @@ public class ChatBot {
 //        }
 //    }
 //
-//    public void completions() {
-//        ConsoleEventSourceListener eventSourceListener = new ConsoleEventSourceListener();
-//        Completion q = Completion.builder()
-//                .prompt("一句话描述下开心的心情")
-//                .stream(true)
-//                .build();
-//        client.streamCompletions(q, eventSourceListener);
-//        CountDownLatch countDownLatch = new CountDownLatch(1);
-//        try {
-//            countDownLatch.await();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    public void completions(String apiKey, String prompt, EventSourceListener eventSourceListener) {
+        Completion q = Completion.builder()
+                .prompt(prompt)
+                .stream(true)
+                .build();
+        getClient(apiKey).streamCompletions(q, eventSourceListener);
+    }
+
+
+    private OpenAiStreamClient getClient(String apikey) {
+        OpenAiStreamClient.Builder builder = OpenAiStreamClient.builder()
+                .connectTimeout(50)
+                .readTimeout(50)
+                .writeTimeout(50)
+                .apiKey(apikey)
+                .apiHost(HTTPS_API_OPENAI_COM);
+        if (enableProxy) {
+            Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
+            builder.proxy(proxy);
+        }
+        return builder.build();
+    }
 }
