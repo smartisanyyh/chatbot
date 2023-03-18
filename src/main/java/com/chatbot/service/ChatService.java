@@ -18,4 +18,8 @@ public class ChatService {
         chatBot.completions(apiKey.getRandomValidKey().getKey(), prompt, eventSourceListener);
     }
 
+    public void chat(String openId, String prompt, EventSourceListener eventSourceListener) {
+        chatBot.chat(apiKey.getRandomValidKey().getKey(), openId, prompt, eventSourceListener);
+    }
+
 }

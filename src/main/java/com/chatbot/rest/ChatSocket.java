@@ -1,6 +1,8 @@
 package com.chatbot.rest;
 
 import com.chatbot.event.WebSocketEventSourceListener;
+import com.chatbot.rest.decoder.ChatRequestDecoder;
+import com.chatbot.rest.request.ChatRequest;
 import com.chatbot.service.ChatService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,7 +19,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-@ServerEndpoint("/chat/{openId}")
+@ServerEndpoint(value = "/chat/{openId}", decoders = {ChatRequestDecoder.class})
 @ApplicationScoped
 public class ChatSocket {
     @Inject
@@ -42,8 +44,12 @@ public class ChatSocket {
     }
 
     @OnMessage
-    public void onMessage(Session session, String message, @PathParam("openId") String openId) {
-        chatService.completions(message, new WebSocketEventSourceListener(session));
+    public void onMessage(Session session, ChatRequest chatRequest, @PathParam("openId") String openId) {
+        if (chatRequest.getIsChat()) {
+            chatService.chat(chatRequest.getOpenId(), chatRequest.getPrompt(), new WebSocketEventSourceListener(session, chatRequest));
+        } else {
+            chatService.completions(chatRequest.getPrompt(), new WebSocketEventSourceListener(session, chatRequest));
+        }
     }
 
 //    private void broadcast(String message) {
