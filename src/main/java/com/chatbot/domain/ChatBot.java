@@ -38,27 +38,49 @@ public class ChatBot {
     @Inject
     ReactiveRedisDataSource redisReactive;
 
+    private static void initMessage(List<Message> messages, String history) {
+        if (StrUtil.isBlank(history)) {
+            messages.add(Message.builder().role(Message.Role.SYSTEM).content("你是一个可以问答任何问题的全能机器人").build());
+        } else {
+            messages.addAll(JSONUtil.toList(history, Message.class));
+        }
+    }
+
+    /**
+     * 收到响应之后回调, 保存响应到redis
+     *
+     * @param eventSourceListener
+     * @param value
+     * @param messages
+     * @param redisKey
+     */
+    private static void saveResponse(WebSocketEventSourceListener eventSourceListener,
+                                     ReactiveValueCommands<String, String> value,
+                                     List<Message> messages, String redisKey) {
+        eventSourceListener.saveResponse(response -> {
+            messages.add(Message.builder().role(Message.Role.ASSISTANT).content(response).build());
+            while (messages.size() > 10) {
+                ((LinkedList<Message>) messages).removeFirst();
+            }
+            value.set(redisKey, JSONUtil.toJsonStr(messages)).await().indefinitely();
+        });
+    }
+
     public Uni<String> chat(String apiKey, String openId, String prompt, EventSourceListener eventSourceListener) {
         ReactiveValueCommands<String, String> value = redisReactive.value(String.class);
         List<Message> messages = ListUtil.list(true);
         String redisKey = CHAT_HISTORY_PREFIX + openId;
         return value.get(redisKey)
                 .invoke(history -> {
-                    if (StrUtil.isBlank(history)) {
-                        messages.add(Message.builder().role(Message.Role.SYSTEM).content("你是一个可以问答任何问题的全能机器人").build());
-                    } else {
-                        messages.addAll(JSONUtil.toList(history, Message.class));
-                        messages.add(Message.builder().role(Message.Role.USER).content(prompt).build());
-                    }
-                    ChatCompletion chatCompletion = ChatCompletion.builder().messages(messages).build();
-                    ((WebSocketEventSourceListener) eventSourceListener).saveResponse(response -> {
-                        messages.add(Message.builder().role(Message.Role.ASSISTANT).content(response).build());
-                        while (messages.size() > 10) {
-                            ((LinkedList<Message>) messages).removeFirst();
-                        }
-                        value.set(redisKey, JSONUtil.toJsonStr(messages)).await().indefinitely();
-                    });
-                    getClient(apiKey).streamChatCompletion(chatCompletion, eventSourceListener);
+                    //初始化消息列表
+                    initMessage(messages, history);
+                    //添加当前消息
+                    messages.add(Message.builder().role(Message.Role.USER).content(prompt).build());
+                    //设置响应回调
+                    saveResponse((WebSocketEventSourceListener) eventSourceListener, value, messages, redisKey);
+                    //发送请求
+                    getClient(apiKey).streamChatCompletion(ChatCompletion.builder().messages(messages).build(),
+                            eventSourceListener);
                 });
     }
 
