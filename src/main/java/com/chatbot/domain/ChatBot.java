@@ -52,7 +52,7 @@ public class ChatBot {
                     }
                     ChatCompletion chatCompletion = ChatCompletion.builder().messages(messages).build();
                     ((WebSocketEventSourceListener) eventSourceListener).saveResponse(response -> {
-                        messages.add(Message.builder().role(Message.Role.ASSISTANT).content(prompt).build());
+                        messages.add(Message.builder().role(Message.Role.ASSISTANT).content(response).build());
                         while (messages.size() > 10) {
                             ((LinkedList<Message>) messages).removeFirst();
                         }
