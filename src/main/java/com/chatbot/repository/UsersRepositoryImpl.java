@@ -13,7 +13,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "users")
 @UserDefinition
-public class User extends PanacheEntity {
+public class UsersRepositoryImpl extends PanacheEntity {
     @Username
     public String username;
     @Password
@@ -28,10 +28,10 @@ public class User extends PanacheEntity {
      * @param role the comma-separated roles
      */
     public static void add(String username, String password, String role) {
-        User user = new User();
-        user.username = username;
-        user.password = BcryptUtil.bcryptHash(password);
-        user.role = role;
-        user.persist();
+        UsersRepositoryImpl usersRepositoryImpl = new UsersRepositoryImpl();
+        usersRepositoryImpl.username = username;
+        usersRepositoryImpl.password = BcryptUtil.bcryptHash(password);
+        usersRepositoryImpl.role = role;
+        usersRepositoryImpl.persist();
     }
 }

@@ -1,7 +1,7 @@
 package com.chatbot.event;
 
 
-import com.chatbot.repository.User;
+import com.chatbot.repository.UsersRepositoryImpl;
 import io.quarkus.runtime.StartupEvent;
 
 import javax.enterprise.event.Observes;
@@ -14,7 +14,7 @@ public class Startup {
     @Transactional
     public void loadUsers(@Observes StartupEvent evt) {
         // reset and load all test users
-        User.deleteAll();
-        User.add("admin", "admin", "admin");
+        UsersRepositoryImpl.deleteAll();
+        UsersRepositoryImpl.add("admin", "admin", "admin");
     }
 }

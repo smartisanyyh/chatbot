@@ -1,18 +1,10 @@
-package com.chatbot.repository;
+package com.chatbot.domain;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import lombok.Data;
 
-import javax.persistence.Entity;
-
-/**
- * 参数配置表 sys_config
- *
- * @author ruoyi
- */
 @Data
-@Entity
-public class SysConfig extends PanacheEntity {
+public class SysConfig {
+
 
     /**
      * 参数名称
@@ -33,5 +25,4 @@ public class SysConfig extends PanacheEntity {
      * 系统内置（Y是 N否）
      */
     private String configType;
-
 }
