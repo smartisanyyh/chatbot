@@ -43,7 +43,6 @@ public class AnswersRepositoryImpl extends PanacheEntityBase {
     @Column(length = 2000)
     private String content;
 
-    @Column(columnDefinition = "datetime(6) default now()")
     private LocalDateTime answerTime;
 
 
