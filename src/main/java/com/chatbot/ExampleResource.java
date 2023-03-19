@@ -1,6 +1,8 @@
 package com.chatbot;
 
 import cn.hutool.json.JSONUtil;
+import com.chatbot.common.enums.ConfigType;
+import com.chatbot.repository.SysConfigRepositoryImpl;
 import com.unfbx.chatgpt.entity.chat.Message;
 import io.quarkus.redis.datasource.ReactiveRedisDataSource;
 import io.quarkus.redis.datasource.value.ReactiveValueCommands;
@@ -8,11 +10,11 @@ import io.smallrye.mutiny.Uni;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.Arrays;
 import java.util.List;
 
 @Path("/hello")
@@ -31,12 +33,11 @@ public class ExampleResource {
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     @Path("test")
+    @Transactional
     public String test() {
-        ReactiveValueCommands<String, String> value = redisReactive.value(String.class);
-        Message aa = Message.builder().role(Message.Role.SYSTEM).content("你是一个可以问答任何问题的全能机器人").build();
-
-        value.set("1", JSONUtil.toJsonStr(Arrays.asList(aa))).await().indefinitely();
-
+        SysConfigRepositoryImpl sysConfigRepository = new SysConfigRepositoryImpl();
+        sysConfigRepository.setConfigType(ConfigType.PUBLIC);
+        SysConfigRepositoryImpl.persist(sysConfigRepository);
         return "Hello from RESTEasy Reactive";
     }
 

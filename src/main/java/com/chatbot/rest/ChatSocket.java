@@ -1,5 +1,6 @@
 package com.chatbot.rest;
 
+import com.chatbot.common.constants.RedisKey;
 import com.chatbot.event.WebSocketEventSourceListener;
 import com.chatbot.rest.decoder.ChatRequestDecoder;
 import com.chatbot.rest.request.ChatRequest;
@@ -35,9 +36,13 @@ public class ChatSocket {
     }
 
     private Uni<Boolean> checkSession(Session session, String openId) {
-        String key = "loginUser:" + openId;
+        String key = RedisKey.LOGIN_USER_PREFIX + openId;
         return redisDataSource.key().exists(key).call(e -> {
-            if (!e) {
+            if (e) {
+                //校验通过 继续执行
+                return Uni.createFrom().voidItem();
+            } else {
+                //校验失败关闭socket
                 return Uni.createFrom().future(session.getAsyncRemote().sendObject("[NO__AUTH]"))
                         .call(() -> Uni.createFrom().completionStage(CompletableFuture.runAsync(() -> {
                             try {
@@ -46,8 +51,6 @@ public class ChatSocket {
                                 throw new RuntimeException(ex);
                             }
                         })));
-            } else {
-                return Uni.createFrom().nothing();
             }
         });
     }
@@ -67,9 +70,10 @@ public class ChatSocket {
                 return chatService.chat(chatRequest.getOpenId(), chatRequest.getPrompt(), new WebSocketEventSourceListener(session, chatRequest));
             } else {
                 return Uni.createFrom()
-                        .completionStage(CompletableFuture.runAsync(() -> chatService.completions(chatRequest.getPrompt(), new WebSocketEventSourceListener(session, chatRequest))));
+                        .completionStage(CompletableFuture.runAsync(() -> chatService.completions(chatRequest.getPrompt(),
+                                new WebSocketEventSourceListener(session, chatRequest))));
             }
-        });
+        }).subscribe().asCompletionStage();
 
     }
 

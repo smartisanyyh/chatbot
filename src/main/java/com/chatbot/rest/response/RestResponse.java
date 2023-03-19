@@ -34,6 +34,10 @@ public class RestResponse implements Serializable {
         return new RestResponse(BizStatus.SUCCESS, data);
     }
 
+    public static RestResponse success() {
+        return new RestResponse(BizStatus.SUCCESS, null);
+    }
+
     public static RestResponse error(BizStatus bizStatus) {
         return new RestResponse(bizStatus);
     }
