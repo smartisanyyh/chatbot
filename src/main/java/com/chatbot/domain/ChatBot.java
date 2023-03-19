@@ -21,11 +21,12 @@ import java.net.Proxy;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.chatbot.common.constants.RedisKey.CHAT_HISTORY_PREFIX;
+
 @ApplicationScoped
 public class ChatBot {
 
     public static final String HTTPS_API_OPENAI_COM = "https://api.openai.com/";
-    public static final String CHAT_HISTORY_PREFIX = "chatHistory:";
 
     @ConfigProperty(name = "proxy.enable", defaultValue = "false")
     Boolean enableProxy;
