@@ -4,6 +4,7 @@ import com.chatbot.common.enums.ConfigType;
 import com.chatbot.domain.SysConfig;
 import com.chatbot.domain.repository.ConfigRepository;
 import com.chatbot.repository.converter.ConfigConverter;
+import com.chatbot.rest.response.RestResponse;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.hibernate.orm.rest.data.panache.PanacheEntityResource;
 import io.quarkus.rest.data.panache.ResourceProperties;
@@ -18,7 +19,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -69,8 +69,8 @@ public class SysConfigRepositoryImpl extends PanacheEntityBase implements Config
         @PermitAll
         @Path("public")
         @GET
-        default List<SysConfigRepositoryImpl> getPublicConfig() {
-            return SysConfigRepositoryImpl.list("config_type", ConfigType.PUBLIC.ordinal());
+        default Object getPublicConfig() {
+            return RestResponse.success(SysConfigRepositoryImpl.list("config_type", ConfigType.PUBLIC.ordinal()));
         }
 
 
