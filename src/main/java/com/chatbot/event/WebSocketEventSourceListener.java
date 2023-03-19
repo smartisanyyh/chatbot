@@ -83,13 +83,18 @@ public class WebSocketEventSourceListener extends EventSourceListener {
     @Override
     public void onFailure(EventSource eventSource, Throwable t, Response response) {
         if (Objects.isNull(response)) {
-            log.error("OpenAI  sse连接异常:{}", t);
+            log.error("OpenAI  sse连接异常:", t);
+            session.getAsyncRemote().sendObject("网络异常请稍后重试.");
+            session.getAsyncRemote().sendObject("[DONE]");
             eventSource.cancel();
             return;
         }
         ResponseBody body = response.body();
         if (Objects.nonNull(body)) {
-            log.error("OpenAI  sse连接异常data：{}，异常：{}", body.string(), t);
+            String bodyStr = body.string();
+            log.error("OpenAI  sse连接异常data：{}，异常：{}", bodyStr, t);
+            session.getAsyncRemote().sendObject(JSONUtil.getByPath(JSONUtil.parseObj(bodyStr), "error.code"));
+            session.getAsyncRemote().sendObject("[DONE]");
         } else {
             log.error("OpenAI  sse连接异常data：{}，异常：{}", response, t);
         }

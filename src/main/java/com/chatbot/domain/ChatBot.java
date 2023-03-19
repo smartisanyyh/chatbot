@@ -95,9 +95,9 @@ public class ChatBot {
 
     private OpenAiStreamClient getClient(String apikey) {
         OpenAiStreamClient.Builder builder = OpenAiStreamClient.builder()
-                .connectTimeout(50)
-                .readTimeout(50)
-                .writeTimeout(50)
+                .connectTimeout(10)
+                .readTimeout(10)
+                .writeTimeout(10)
                 .apiKey(apikey)
                 .apiHost(HTTPS_API_OPENAI_COM);
         if (enableProxy) {
