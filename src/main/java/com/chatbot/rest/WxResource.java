@@ -4,7 +4,6 @@ import com.chatbot.domain.WeChat;
 import com.chatbot.domain.dto.WeChatSessionDto;
 import com.chatbot.rest.response.RestResponse;
 import io.smallrye.mutiny.Uni;
-import me.chanjar.weixin.common.error.WxErrorException;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -22,7 +21,7 @@ public class WxResource {
     @GET
     @Path("{code}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Uni<RestResponse> loginByCode(@PathParam("code") String code) throws WxErrorException {
+    public Uni<RestResponse> loginByCode(@PathParam("code") String code) {
         return RestResponse.success(weChat.login(code).map(WeChatSessionDto::getOpenid));
     }
 }

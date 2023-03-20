@@ -34,23 +34,12 @@
             <artifactId>quarkus-rest-client-reactive-jsonb</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jodd</groupId>
-            <artifactId>jodd-http</artifactId>
-            <version>6.3.0</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-flyway</artifactId>
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-mysql</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.binarywang</groupId>
-            <artifactId>weixin-java-miniapp</artifactId>
-            <version>4.4.0</version>
         </dependency>
         <dependency>
             <groupId>com.unfbx</groupId>
