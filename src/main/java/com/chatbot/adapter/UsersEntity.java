@@ -1,4 +1,4 @@
-package com.chatbot.repository;
+package com.chatbot.adapter;
 
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
@@ -16,7 +16,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "users")
 @UserDefinition
-public class UsersRepositoryImpl extends PanacheEntityBase {
+public class UsersEntity extends PanacheEntityBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
@@ -34,10 +34,10 @@ public class UsersRepositoryImpl extends PanacheEntityBase {
      * @param role the comma-separated roles
      */
     public static void add(String username, String password, String role) {
-        UsersRepositoryImpl usersRepositoryImpl = new UsersRepositoryImpl();
-        usersRepositoryImpl.username = username;
-        usersRepositoryImpl.password = BcryptUtil.bcryptHash(password);
-        usersRepositoryImpl.role = role;
-        usersRepositoryImpl.persist();
+        UsersEntity usersEntity = new UsersEntity();
+        usersEntity.username = username;
+        usersEntity.password = BcryptUtil.bcryptHash(password);
+        usersEntity.role = role;
+        usersEntity.persist();
     }
 }

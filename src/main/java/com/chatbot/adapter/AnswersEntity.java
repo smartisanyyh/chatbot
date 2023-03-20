@@ -1,4 +1,4 @@
-package com.chatbot.repository;
+package com.chatbot.adapter;
 
 import com.chatbot.rest.response.RestResponse;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
@@ -28,7 +28,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "answers")
 @ApplicationScoped
-public class AnswersRepositoryImpl extends PanacheEntityBase {
+public class AnswersEntity extends PanacheEntityBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
@@ -48,13 +48,13 @@ public class AnswersRepositoryImpl extends PanacheEntityBase {
 
     @RolesAllowed("admin")
     @ResourceProperties(path = "answers")
-    interface AnswersDefaultResource extends PanacheEntityResource<AnswersRepositoryImpl, Long> {
+    interface AnswersDefaultResource extends PanacheEntityResource<AnswersEntity, Long> {
 
         @Path("all")
         @PermitAll
         @GET
         default Object all() {
-            return RestResponse.success(AnswersRepositoryImpl.listAll());
+            return RestResponse.success(AnswersEntity.listAll());
         }
     }
 }

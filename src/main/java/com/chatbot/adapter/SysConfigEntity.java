@@ -1,9 +1,9 @@
-package com.chatbot.repository;
+package com.chatbot.adapter;
 
+import com.chatbot.adapter.converter.ConfigConverter;
 import com.chatbot.common.enums.ConfigType;
 import com.chatbot.domain.SysConfig;
 import com.chatbot.domain.repository.ConfigRepository;
-import com.chatbot.repository.converter.ConfigConverter;
 import com.chatbot.rest.response.RestResponse;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.hibernate.orm.rest.data.panache.PanacheEntityResource;
@@ -29,7 +29,7 @@ import java.util.Optional;
 @Data
 @Entity
 @Table(name = "sys_config")
-public class SysConfigRepositoryImpl extends PanacheEntityBase implements ConfigRepository {
+public class SysConfigEntity extends PanacheEntityBase implements ConfigRepository {
 
 
     @Id
@@ -58,19 +58,19 @@ public class SysConfigRepositoryImpl extends PanacheEntityBase implements Config
 
     @Override
     public Optional<SysConfig> getConfigByKey(String configKey) {
-        Optional<SysConfigRepositoryImpl> config = SysConfigRepositoryImpl.find("config_key", configKey).firstResultOptional();
+        Optional<SysConfigEntity> config = SysConfigEntity.find("config_key", configKey).firstResultOptional();
         return config.map(ConfigConverter::convert);
     }
 
 
     @RolesAllowed("admin")
     @ResourceProperties(path = "sys/config")
-    interface SysConfigDefaultResource extends PanacheEntityResource<SysConfigRepositoryImpl, Long> {
+    interface SysConfigDefaultResource extends PanacheEntityResource<SysConfigEntity, Long> {
         @PermitAll
         @Path("public")
         @GET
         default Object getPublicConfig() {
-            return RestResponse.success(SysConfigRepositoryImpl.list("config_type", ConfigType.PUBLIC.ordinal()));
+            return RestResponse.success(SysConfigEntity.list("config_type", ConfigType.PUBLIC.ordinal()));
         }
 
 

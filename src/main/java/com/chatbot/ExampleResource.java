@@ -1,8 +1,8 @@
 package com.chatbot;
 
 import cn.hutool.json.JSONUtil;
+import com.chatbot.adapter.SysConfigEntity;
 import com.chatbot.common.enums.ConfigType;
-import com.chatbot.repository.SysConfigRepositoryImpl;
 import com.unfbx.chatgpt.entity.chat.Message;
 import io.quarkus.redis.datasource.ReactiveRedisDataSource;
 import io.quarkus.redis.datasource.value.ReactiveValueCommands;
@@ -35,9 +35,9 @@ public class ExampleResource {
     @Path("test")
     @Transactional
     public String test() {
-        SysConfigRepositoryImpl sysConfigRepository = new SysConfigRepositoryImpl();
+        SysConfigEntity sysConfigRepository = new SysConfigEntity();
         sysConfigRepository.setConfigType(ConfigType.PUBLIC);
-        SysConfigRepositoryImpl.persist(sysConfigRepository);
+        SysConfigEntity.persist(sysConfigRepository);
         return "Hello from RESTEasy Reactive";
     }
 

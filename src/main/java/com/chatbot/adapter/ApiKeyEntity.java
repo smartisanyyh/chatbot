@@ -1,9 +1,9 @@
-package com.chatbot.repository;
+package com.chatbot.adapter;
 
-import com.chatbot.domain.entity.ApiKeyEntity;
+import com.chatbot.adapter.converter.ApiKeyConverter;
+import com.chatbot.domain.dto.ApiKeyDto;
 import com.chatbot.domain.enums.KeyStatus;
 import com.chatbot.domain.repository.ApiKeyRepository;
-import com.chatbot.repository.converter.ApiKeyConverter;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.hibernate.orm.rest.data.panache.PanacheEntityResource;
 import io.quarkus.rest.data.panache.ResourceProperties;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "api_key")
 @ApplicationScoped
-public class ApiKeyRepositoryImpl extends PanacheEntityBase implements ApiKeyRepository {
+public class ApiKeyEntity extends PanacheEntityBase implements ApiKeyRepository {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
@@ -43,14 +43,14 @@ public class ApiKeyRepositoryImpl extends PanacheEntityBase implements ApiKeyRep
     private KeyStatus status;
 
     @Override
-    public List<ApiKeyEntity> findAllApiKey() {
-        return ApiKeyRepositoryImpl.<ApiKeyRepositoryImpl>listAll().stream().map(ApiKeyConverter::convert).collect(Collectors.toList());
+    public List<ApiKeyDto> findAllApiKey() {
+        return ApiKeyEntity.<ApiKeyEntity>listAll().stream().map(ApiKeyConverter::convert).collect(Collectors.toList());
     }
 
 
     @RolesAllowed("admin")
     @ResourceProperties(path = "sys/apikey")
-    interface ApiKeyDefaultResource extends PanacheEntityResource<ApiKeyRepositoryImpl, Long> {
+    interface ApiKeyDefaultResource extends PanacheEntityResource<ApiKeyEntity, Long> {
 
     }
 }

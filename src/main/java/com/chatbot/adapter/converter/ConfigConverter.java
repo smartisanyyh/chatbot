@@ -1,13 +1,13 @@
-package com.chatbot.repository.converter;
+package com.chatbot.adapter.converter;
 
+import com.chatbot.adapter.SysConfigEntity;
 import com.chatbot.domain.SysConfig;
-import com.chatbot.repository.SysConfigRepositoryImpl;
 
 public class ConfigConverter {
 
-    public static SysConfig convert(SysConfigRepositoryImpl sysConfigRepositoryImpl) {
+    public static SysConfig convert(SysConfigEntity sysConfigEntity) {
         SysConfig sysConfig = new SysConfig();
-        sysConfig.setConfigName(sysConfigRepositoryImpl.getConfigName());
+        sysConfig.setConfigName(sysConfigEntity.getConfigName());
         sysConfig.setConfigKey(sysConfig.getConfigKey());
         sysConfig.setConfigValue(sysConfig.getConfigValue());
         sysConfig.setConfigType(sysConfig.getConfigType());

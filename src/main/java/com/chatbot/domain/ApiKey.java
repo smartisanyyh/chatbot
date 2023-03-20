@@ -1,7 +1,7 @@
 package com.chatbot.domain;
 
 import com.chatbot.common.enums.BizStatus;
-import com.chatbot.domain.entity.ApiKeyEntity;
+import com.chatbot.domain.dto.ApiKeyDto;
 import com.chatbot.domain.enums.KeyStatus;
 import com.chatbot.domain.repository.ApiKeyRepository;
 import com.chatbot.exceptions.BizException;
@@ -15,7 +15,7 @@ import java.util.Random;
 public class ApiKey {
     @Inject
     ApiKeyRepository apiKeyRepository;
-    private List<ApiKeyEntity> keys;
+    private List<ApiKeyDto> keys;
 
     public void init() {
         try {
@@ -25,8 +25,8 @@ public class ApiKey {
         }
     }
 
-    public ApiKeyEntity getRandomValidKey() {
-        List<ApiKeyEntity> collect = keys.stream().filter(i -> i.getStatus() == KeyStatus.NORMAL).toList();
+    public ApiKeyDto getRandomValidKey() {
+        List<ApiKeyDto> collect = keys.stream().filter(i -> i.getStatus() == KeyStatus.NORMAL).toList();
         if (collect.size() == 0) {
             throw new BizException(BizStatus.NO_NORMAL_KEY_NOW);
         }

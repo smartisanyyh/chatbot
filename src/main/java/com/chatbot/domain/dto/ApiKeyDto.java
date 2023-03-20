@@ -1,10 +1,10 @@
-package com.chatbot.domain.entity;
+package com.chatbot.domain.dto;
 
 import com.chatbot.domain.enums.KeyStatus;
 import lombok.Data;
 
 @Data
-public class ApiKeyEntity {
+public class ApiKeyDto {
     private KeyStatus status;
     private String key;
 }
