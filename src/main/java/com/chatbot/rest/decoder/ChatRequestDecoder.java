@@ -17,7 +17,6 @@ public class ChatRequestDecoder implements Decoder.Text<ChatRequest> {
 
     @Override
     public boolean willDecode(String s) {
-
         return (s != null);
     }
 
