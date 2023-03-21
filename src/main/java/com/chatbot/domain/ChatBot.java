@@ -72,7 +72,7 @@ public class ChatBot {
         String redisKey = CHAT_HISTORY_PREFIX + openId;
         return redisReactive.value(String.class).get(redisKey)
                 .invoke(history -> {
-                    //初始化消息列表
+                    //初始化 消息列表
                     initMessage(messages, history);
                     //添加当前消息
                     messages.add(Message.builder().role(Message.Role.USER).content(prompt).build());
