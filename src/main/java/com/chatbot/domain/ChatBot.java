@@ -9,7 +9,6 @@ import com.unfbx.chatgpt.entity.chat.ChatCompletion;
 import com.unfbx.chatgpt.entity.chat.Message;
 import com.unfbx.chatgpt.entity.completions.Completion;
 import io.quarkus.redis.datasource.ReactiveRedisDataSource;
-import io.quarkus.redis.datasource.value.ReactiveValueCommands;
 import io.smallrye.mutiny.Uni;
 import okhttp3.sse.EventSourceListener;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -18,6 +17,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,34 +51,33 @@ public class ChatBot {
      * 收到响应之后回调, 保存响应到redis
      *
      * @param eventSourceListener
-     * @param value
      * @param messages
      * @param redisKey
      */
-    private static void saveResponse(WebSocketEventSourceListener eventSourceListener,
-                                     ReactiveValueCommands<String, String> value,
-                                     List<Message> messages, String redisKey) {
+    private void saveResponse(WebSocketEventSourceListener eventSourceListener,
+                              List<Message> messages, String redisKey) {
         eventSourceListener.saveResponse(response -> {
             messages.add(Message.builder().role(Message.Role.ASSISTANT).content(response).build());
             while (messages.size() > 10) {
                 ((LinkedList<Message>) messages).removeFirst();
             }
-            value.set(redisKey, JSONUtil.toJsonStr(messages)).await().indefinitely();
+            redisReactive.value(String.class).set(redisKey, JSONUtil.toJsonStr(messages))
+                    .call(() -> redisReactive.key().expire(redisKey, Duration.ofHours(12)))
+                    .subscribe().asCompletionStage();
         });
     }
 
     public Uni<String> chat(String apiKey, String openId, String prompt, EventSourceListener eventSourceListener) {
-        ReactiveValueCommands<String, String> value = redisReactive.value(String.class);
         List<Message> messages = ListUtil.list(true);
         String redisKey = CHAT_HISTORY_PREFIX + openId;
-        return value.get(redisKey)
+        return redisReactive.value(String.class).get(redisKey)
                 .invoke(history -> {
                     //初始化消息列表
                     initMessage(messages, history);
                     //添加当前消息
                     messages.add(Message.builder().role(Message.Role.USER).content(prompt).build());
                     //设置响应回调
-                    saveResponse((WebSocketEventSourceListener) eventSourceListener, value, messages, redisKey);
+                    saveResponse((WebSocketEventSourceListener) eventSourceListener, messages, redisKey);
                     //发送请求
                     getClient(apiKey).streamChatCompletion(ChatCompletion.builder().messages(messages).build(),
                             eventSourceListener);
