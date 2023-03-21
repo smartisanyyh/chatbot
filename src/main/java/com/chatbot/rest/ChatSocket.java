@@ -43,8 +43,9 @@ public class ChatSocket {
                 return Uni.createFrom().voidItem();
             } else {
                 //校验失败关闭socket
-                return Uni.createFrom().future(session.getAsyncRemote().sendObject("[NO__AUTH]"))
-                        .call(() -> Uni.createFrom().completionStage(CompletableFuture.runAsync(() -> {
+                return Uni.createFrom()
+                        .future(() -> session.getAsyncRemote().sendObject("[NO__AUTH]"))
+                        .call(() -> Uni.createFrom().future(() -> CompletableFuture.runAsync(() -> {
                             try {
                                 session.close();
                             } catch (IOException ex) {
@@ -65,16 +66,20 @@ public class ChatSocket {
 
     @OnMessage
     public void onMessage(Session session, ChatRequest chatRequest) {
-        checkSession(session, chatRequest.getOpenId()).call(() -> {
-            if (chatRequest.getIsChat()) {
-                return chatService.chat(chatRequest.getOpenId(), chatRequest.getPrompt(), new WebSocketEventSourceListener(session, chatRequest));
-            } else {
-                return Uni.createFrom()
-                        .completionStage(CompletableFuture.runAsync(() -> chatService.completions(chatRequest.getPrompt(),
-                                new WebSocketEventSourceListener(session, chatRequest))));
-            }
-        }).subscribe().asCompletionStage();
+        checkSession(session, chatRequest.getOpenId())
+                .call(() -> processChatRequest(session, chatRequest))
+                .subscribe().asCompletionStage();
 
+    }
+
+    private Uni<?> processChatRequest(Session session, ChatRequest chatRequest) {
+        if (chatRequest.getIsChat()) {
+            return chatService.chat(chatRequest.getOpenId(), chatRequest.getPrompt(), new WebSocketEventSourceListener(session, chatRequest));
+        } else {
+            return Uni.createFrom()
+                    .completionStage(() -> CompletableFuture.runAsync(() -> chatService.completions(chatRequest.getPrompt(),
+                            new WebSocketEventSourceListener(session, chatRequest))));
+        }
     }
 
 }
