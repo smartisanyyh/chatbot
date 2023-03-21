@@ -86,11 +86,10 @@ public class ChatBot {
     }
 
     public void completions(String apiKey, String prompt, EventSourceListener eventSourceListener) {
-        Completion q = Completion.builder()
+        getClient(apiKey).streamCompletions(Completion.builder()
                 .prompt(prompt)
                 .stream(true)
-                .build();
-        getClient(apiKey).streamCompletions(q, eventSourceListener);
+                .build(), eventSourceListener);
     }
 
 
