@@ -93,10 +93,10 @@ public class WebSocketEventSourceListener extends EventSourceListener {
         if (Objects.nonNull(body)) {
             String bodyStr = body.string();
             log.error("OpenAI  sse连接异常data：{}，异常：{}", bodyStr, t);
-            session.getAsyncRemote().sendObject(JSONUtil.getByPath(JSONUtil.parseObj(bodyStr), "error.code"));
+            session.getAsyncRemote().sendObject(JSONUtil.getByPath(JSONUtil.parseObj(bodyStr), "error.type"));
             session.getAsyncRemote().sendObject("[DONE]");
         } else {
-            log.error("OpenAI  sse连接异常data：{}，异常：{}", response, t);
+            log.error("OpenAI  sse连接异常 无 body：{}，异常：{}", response, t);
         }
         eventSource.cancel();
     }
