@@ -1,7 +1,15 @@
 # chatbot
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/BhfV4K?referralCode=jdPmwi)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/wa37oS?referralCode=jdPmwi)
 
+Due to the problem of railway current template creation, please add it to the variable manually.
+
+```
+wx.appId=your app id
+wx.secret=your secret
+```
+
+---
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
