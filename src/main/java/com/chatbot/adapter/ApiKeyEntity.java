@@ -47,6 +47,15 @@ public class ApiKeyEntity extends PanacheEntityBase implements ApiKeyRepository 
         return ApiKeyEntity.<ApiKeyEntity>listAll().stream().map(ApiKeyConverter::convert).collect(Collectors.toList());
     }
 
+    @Override
+    public void persist(ApiKeyDto apiKeyDto) {
+        ApiKeyEntity.persist(ApiKeyConverter.convert(apiKeyDto));
+    }
+
+    @Override
+    public void delete(String apiKey) {
+        ApiKeyEntity.delete("apikey", apiKey);
+    }
 
     @RolesAllowed("admin")
     @ResourceProperties(path = "sys/apikey")

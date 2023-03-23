@@ -25,6 +25,26 @@ public class ApiKey {
         }
     }
 
+    public void add(String apiKey) {
+        ApiKeyDto apiKeyDto = ApiKeyDto.builder()
+                .key(apiKey)
+                .status(KeyStatus.NORMAL)
+                .build();
+        this.keys.add(apiKeyDto);
+        apiKeyRepository.persist(apiKeyDto);
+    }
+
+    public void delete(String apiKey) {
+        this.keys.removeIf(i -> apiKey.equals(i.getKey()));
+        apiKeyRepository.delete(apiKey);
+
+    }
+
+    public List<ApiKeyDto> keys() {
+        return keys;
+    }
+
+
     public ApiKeyDto getRandomValidKey() {
         List<ApiKeyDto> collect = keys.stream().filter(i -> i.getStatus() == KeyStatus.NORMAL).toList();
         if (collect.size() == 0) {

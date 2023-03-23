@@ -7,4 +7,8 @@ import java.util.List;
 public interface ApiKeyRepository {
 
     List<ApiKeyDto> findAllApiKey();
+
+    void persist(ApiKeyDto apiKeyDto);
+
+    void delete(String apiKey);
 }

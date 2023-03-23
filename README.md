@@ -1,5 +1,14 @@
 # chatbot
 
+## Frontend: [link](https://github.com/smartisanyyh/chatbot_wmp)
+
+## Preparation
+
+* Wechat mini program [enroll/login](https://mp.weixin.qq.com/)
+* ChatGPT apikey [enroll/get](https://platform.openai.com/account/api-keys)
+
+## Deploy
+
 [![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/Pfg93k?referralCode=jdPmwi)
 
 Due to the problem of railway current template creation, please copy and paste below variables to the variable row
@@ -14,6 +23,29 @@ quarkus.datasource.username=${{MySQL.MYSQLUSER}}
 quarkus.datasource.jdbc.url=jdbc:mysql://${{MySQL.MYSQLHOST}}:${{MySQL.MYSQLPORT}}/${{MySQL.MYSQLDATABASE}}
 quarkus.redis.hosts=${{Redis.REDIS_URL}}/0
 quarkus.http.port=${PORT}
+```
+
+> Since there is no time to do the management interface, let's reluctantly use curl to add apikey.
+
+### get api key
+
+```shell
+curl --location --request GET '{your_host}/key' \
+--header 'Authorization: Basic YWRtaW46YWRtaW4=' 
+```
+
+### add api key
+
+```shell
+curl --location --request POST '{your_host}/key/{your_api_key}' \
+--header 'Authorization: Basic YWRtaW46YWRtaW4=' 
+```
+
+### delete api key
+
+```shell
+curl --location --request DELETE '{your_host}/key/{your_api_key}' \
+--header 'Authorization: Basic YWRtaW46YWRtaW4=' 
 ```
 
 ---
