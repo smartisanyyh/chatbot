@@ -31,7 +31,7 @@ import java.time.LocalDateTime;
 public class AnswersEntity extends PanacheEntityBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    private Long id;
 
     /**
      * 标题

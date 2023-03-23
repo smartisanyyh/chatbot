@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class ApiKeyEntity extends PanacheEntityBase implements ApiKeyRepository {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    private Long id;
 
     /**
      * 参数名称

@@ -34,7 +34,7 @@ public class SysConfigEntity extends PanacheEntityBase implements ConfigReposito
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    private Long id;
 
     /**
      * 参数名称

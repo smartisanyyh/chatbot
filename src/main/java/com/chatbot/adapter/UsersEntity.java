@@ -19,7 +19,7 @@ import javax.persistence.Table;
 public class UsersEntity extends PanacheEntityBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    private Long id;
     @Username
     public String username;
     @Password
