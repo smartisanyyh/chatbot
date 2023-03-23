@@ -19,10 +19,6 @@ quarkus.profile=mysql or pg
 wx.appId=your app id
 wx.secret=your secret
 RAILWAY_DOCKERFILE_PATH=src/main/docker/Dockerfile.multistage
-quarkus.datasource.password=${{MySQL.MYSQLPASSWORD}}
-quarkus.datasource.username=${{MySQL.MYSQLUSER}}
-quarkus.datasource.jdbc.url=jdbc:mysql://${{MySQL.MYSQLHOST}}:${{MySQL.MYSQLPORT}}/${{MySQL.MYSQLDATABASE}}
-quarkus.redis.hosts=${{Redis.REDIS_URL}}/0
 quarkus.http.port=${PORT}
 ```
 
