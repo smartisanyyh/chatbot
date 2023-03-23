@@ -27,28 +27,47 @@ quarkus.http.port=${PORT}
 
 > Since there is no time to do the management interface, let's reluctantly use curl to add apikey.
 
-### get api key
+### Api
+
+#### get api key
 
 ```shell
 curl --location --request GET '{your_host}/key' \
 --header 'Authorization: Basic YWRtaW46YWRtaW4=' 
 ```
 
-### add api key
+#### add api key
 
 ```shell
 curl --location --request POST '{your_host}/key/{your_api_key}' \
 --header 'Authorization: Basic YWRtaW46YWRtaW4=' 
 ```
 
-### delete api key
+#### delete api key
 
 ```shell
 curl --location --request DELETE '{your_host}/key/{your_api_key}' \
 --header 'Authorization: Basic YWRtaW46YWRtaW4=' 
 ```
 
+### Change admin password
+
+Now the method of http basic is used for identity authentication, and the password can be changed by yourself in the
+database.
+password should be encrypt with io.quarkus.elytron.security.common.BcryptUtil.bcryptHash(password)
+
+```java
+    public static void main(String[]args){
+        String password="admin";
+        BcryptUtil.bcryptHash(password);
+        }
+```
+
 ---
+
+> If you want to know more about quarkus, please look at the below part. If you don't want to, you can skip it directly.
+
+
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
