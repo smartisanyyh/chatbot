@@ -17,6 +17,12 @@ editor manually.
 ```
 wx.appId=your app id
 wx.secret=your secret
+PGDATABASE=${{Postgres.PGDATABASE}}
+PGHOST=${{Postgres.PGHOST}}
+PGPASSWORD=${{Postgres.PGPASSWORD}}
+PGPORT=${{Postgres.PGPORT}}
+PGUSER=${{Postgres.PGUSER}}
+REDIS_URL=${{Redis.REDIS_URL}}
 ```
 
 > Since there is no time to do the management interface, let's reluctantly use curl to add apikey.
