@@ -15,6 +15,7 @@ Due to the problem of railway current template creation, please copy and paste b
 editor manually.
 
 ```
+quarkus.profile=mysql or pg
 wx.appId=your app id
 wx.secret=your secret
 RAILWAY_DOCKERFILE_PATH=src/main/docker/Dockerfile.multistage
