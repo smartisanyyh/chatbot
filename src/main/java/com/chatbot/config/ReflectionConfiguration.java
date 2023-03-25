@@ -1,5 +1,7 @@
 package com.chatbot.config;
 
+import com.chatbot.domain.dto.MessageCheckResponseDto;
+import com.chatbot.domain.dto.WeChatAccessTokenDto;
 import com.chatbot.domain.dto.WeChatSessionDto;
 import com.chatbot.rest.request.ChatRequest;
 import com.unfbx.chatgpt.entity.chat.ChatCompletion;
@@ -15,6 +17,9 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
         ChatCompletion.class,
         ChatCompletionResponse.class,
         Completion.class,
+        MessageCheckResponseDto.class,
+        MessageCheckResponseDto.class,
+        WeChatAccessTokenDto.class,
         CompletionResponse.class})
 public class ReflectionConfiguration {
 }
