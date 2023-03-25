@@ -4,6 +4,8 @@ quarkus demo
 
 integrate with chatgpt,use stream api
 
+[v2ex](https://www.v2ex.com/t/926542)
+
 ## Frontend: [link](https://github.com/smartisanyyh/chatbot_wmp)
 
 ## Preparation
