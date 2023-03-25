@@ -67,7 +67,7 @@ public class ChatBot {
         });
     }
 
-    public Uni<String> chat(String apiKey, String openId, String prompt, EventSourceListener eventSourceListener) {
+    public Uni<Void> chat(String apiKey, String openId, String prompt, EventSourceListener eventSourceListener) {
         List<Message> messages = ListUtil.list(true);
         String redisKey = CHAT_HISTORY_PREFIX + openId;
         return redisReactive.value(String.class).get(redisKey)
@@ -81,7 +81,7 @@ public class ChatBot {
                     //发送请求
                     getClient(apiKey).streamChatCompletion(ChatCompletion.builder().messages(messages).build(),
                             eventSourceListener);
-                });
+                }).replaceWithVoid();
     }
 
     public void completions(String apiKey, String prompt, EventSourceListener eventSourceListener) {

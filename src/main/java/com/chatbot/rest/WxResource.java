@@ -10,6 +10,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 
@@ -23,5 +24,14 @@ public class WxResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Uni<RestResponse> loginByCode(@PathParam("code") String code) {
         return RestResponse.success(weChat.login(code).map(WeChatSessionDto::getOpenid));
+    }
+
+
+    @GET
+    @Path("messageCheck")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Uni<RestResponse> accessToken(@QueryParam("message") String message,
+                                         @QueryParam("openid") String openid) {
+        return RestResponse.success(weChat.messageCheck(message, openid));
     }
 }

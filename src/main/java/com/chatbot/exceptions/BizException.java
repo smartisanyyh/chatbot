@@ -6,6 +6,7 @@ public class BizException extends RuntimeException {
     private BizStatus bizStatus;
 
     public BizException(BizStatus bizStatus) {
+        super(bizStatus.getMessage());
         this.bizStatus = bizStatus;
     }
 

@@ -1,6 +1,7 @@
 package com.chatbot.rest;
 
 import com.chatbot.common.constants.RedisKey;
+import com.chatbot.domain.WeChat;
 import com.chatbot.event.WebSocketEventSourceListener;
 import com.chatbot.rest.decoder.ChatRequestDecoder;
 import com.chatbot.rest.request.ChatRequest;
@@ -29,6 +30,8 @@ public class ChatSocket {
     ChatService chatService;
     @Inject
     ReactiveRedisDataSource redisDataSource;
+    @Inject
+    WeChat weChat;
 
     @OnOpen
     public void onOpen(Session session, @PathParam("openId") String openId) {
@@ -67,7 +70,12 @@ public class ChatSocket {
     @OnMessage
     public void onMessage(Session session, ChatRequest chatRequest) {
         checkSession(session, chatRequest.getOpenId())
+                .call(() -> weChat.messageCheck(chatRequest.getPrompt(), chatRequest.getOpenId()))
                 .call(() -> processChatRequest(session, chatRequest))
+                .onFailure().invoke(e -> {
+                    session.getAsyncRemote().sendObject("ERROR:" + e.getMessage());
+                    session.getAsyncRemote().sendObject("[DONE]");
+                })
                 .subscribe().asCompletionStage();
 
     }

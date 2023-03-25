@@ -19,7 +19,7 @@ public class ChatService {
         chatBot.completions(apiKey.getRandomValidKey().getKey(), prompt, eventSourceListener);
     }
 
-    public Uni<String> chat(String openId, String prompt, EventSourceListener eventSourceListener) {
+    public Uni<Void> chat(String openId, String prompt, EventSourceListener eventSourceListener) {
         return chatBot.chat(apiKey.getRandomValidKey().getKey(), openId, prompt, eventSourceListener);
     }
 
