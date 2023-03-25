@@ -1,5 +1,9 @@
 # chatbot
 
+quarkus demo
+
+integrate with chatgpt,use stream api
+
 ## Frontend: [link](https://github.com/smartisanyyh/chatbot_wmp)
 
 ## Preparation
