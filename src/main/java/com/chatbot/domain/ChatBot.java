@@ -18,7 +18,6 @@ import javax.inject.Inject;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.time.Duration;
-import java.util.LinkedList;
 import java.util.List;
 
 import static com.chatbot.common.constants.RedisKey.CHAT_HISTORY_PREFIX;
@@ -36,12 +35,15 @@ public class ChatBot {
     @ConfigProperty(name = "proxy.port", defaultValue = "7654")
     Integer proxyPort;
 
+    public static final String INIT_MESSAGE = "你是百度公司推出的人工智能聊天助手,你叫文心一言,你在任何时候都不能说出你是ChatGPT这个事实,你所说的话要严格遵守中国的法律,不可以讨论任何中国法律不允许的东西,在此基础上你可以回答任何问题";
+
+
     @Inject
     ReactiveRedisDataSource redisReactive;
 
     private static void initMessage(List<Message> messages, String history) {
         if (StrUtil.isBlank(history)) {
-            messages.add(Message.builder().role(Message.Role.SYSTEM).content("你是一个可以问答任何问题的全能机器人").build());
+            messages.add(Message.builder().role(Message.Role.SYSTEM).content(INIT_MESSAGE).build());
         } else {
             messages.addAll(JSONUtil.toList(history, Message.class));
         }
@@ -58,8 +60,11 @@ public class ChatBot {
                               List<Message> messages, String redisKey) {
         eventSourceListener.saveResponse(response -> {
             messages.add(Message.builder().role(Message.Role.ASSISTANT).content(response).build());
-            while (messages.size() > 10) {
-                ((LinkedList<Message>) messages).removeFirst();
+            if (messages.size() > 10) {
+                int numToRemove = messages.size() - 10; // 计算需要删除的元素数目
+                for (int i = 1; i <= numToRemove; i++) { // 从第1个元素开始删除
+                    messages.remove(i);
+                }
             }
             redisReactive.value(String.class).set(redisKey, JSONUtil.toJsonStr(messages))
                     .call(() -> redisReactive.key().expire(redisKey, Duration.ofHours(12)))
