@@ -79,7 +79,7 @@ public class WeChat {
 
     private Uni<String> accessToken() {
         ReactiveValueCommands<String, String> value = reactiveRedisDataSource.value(String.class);
-        return value.get(ACCESS_TOKEN_KEY).call(cachedToken -> {
+        return value.get(ACCESS_TOKEN_KEY).chain(cachedToken -> {
             if (!StringUtil.isNullOrEmpty(cachedToken)) {
                 return Uni.createFrom().item(cachedToken);
             } else {

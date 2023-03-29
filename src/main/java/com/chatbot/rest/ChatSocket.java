@@ -38,9 +38,9 @@ public class ChatSocket {
         checkSession(session, openId).subscribeAsCompletionStage();
     }
 
-    private Uni<Boolean> checkSession(Session session, String openId) {
+    private Uni<Void> checkSession(Session session, String openId) {
         String key = RedisKey.LOGIN_USER_PREFIX + openId;
-        return redisDataSource.key().exists(key).call(e -> {
+        return redisDataSource.key().exists(key).chain(e -> {
             if (e) {
                 //校验通过 继续执行
                 return Uni.createFrom().voidItem();
@@ -48,7 +48,7 @@ public class ChatSocket {
                 //校验失败关闭socket
                 return Uni.createFrom()
                         .future(() -> session.getAsyncRemote().sendObject("[NO__AUTH]"))
-                        .call(() -> Uni.createFrom().future(() -> CompletableFuture.runAsync(() -> {
+                        .chain(() -> Uni.createFrom().future(() -> CompletableFuture.runAsync(() -> {
                             try {
                                 session.close();
                             } catch (IOException ex) {
@@ -70,8 +70,8 @@ public class ChatSocket {
     @OnMessage
     public void onMessage(Session session, ChatRequest chatRequest) {
         checkSession(session, chatRequest.getOpenId())
-                .call(() -> weChat.messageCheck(chatRequest.getPrompt(), chatRequest.getOpenId()))
-                .call(() -> processChatRequest(session, chatRequest))
+                .chain(() -> weChat.messageCheck(chatRequest.getPrompt(), chatRequest.getOpenId()))
+                .chain(() -> processChatRequest(session, chatRequest))
                 .onFailure().invoke(e -> {
                     session.getAsyncRemote().sendObject("ERROR:" + e.getMessage());
                     session.getAsyncRemote().sendObject("[DONE]");
